@@ -1,13 +1,22 @@
 use std::io;
-use clearscreen::clear;
 
-const pos: i64 = [1.5, 2.0, 2.5, 3.0, 3.5, 4];
-const neg: i64 = [2/3, 2/4, 2/5, 2/6, 2/7, 2/8];
-const spd_title: String = [
+// Multipliers
+const POS: [f64; 6] = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0];
+const NEG: [f64; 6] = [2.0/3.0, 2.0/4.0, 2.0/5.0, 2.0/6.0, 2.0/7.0, 2.0/8.0];
+const DIST: [&str; 3] = [
     "BENEFICIAL NATURE, 252 EVs:",
     "NEUTRAL NATURE, 252 EVs:",
     "NEUTRAL NATURE, 0 EVs:"
 ];
+
+fn print_stats(stat: f64) {
+    for i in 0..6 {
+        println!("{0: >40}+{1}: {2: <7}{3: >7}-{4}: {5}", 
+            "", i + 1, (stat * POS[i]) as i32,
+            "", i + 1, (stat * NEG[i]) as i32
+        );
+    }
+}
 
 fn main() {
     println!("STAT CALC LOADED.");
@@ -28,7 +37,8 @@ fn main() {
         };
 
         // Clear terminal window
-        clear().expect("FAILED TO CLEAR SCREEN");
+        //clear().expect("FAILED TO CLEAR SCREEN");
+        print!("{}[2J", 27 as char);
 
         // Mathematical calculations to obtain values
         let neu_max: i32 = ((stat + 1) as f64 / 1.1) as i32;
@@ -39,17 +49,16 @@ fn main() {
         let stat_dist = [stat as i32, neu_max, neu_min];
 
         // Print base value to screen
-        println!("{0: >70} {1: >4}", "BASE:", base);
+        println!("{0} {1: >4}", "BASE:", base);
 
         // Print the stats for each distribution
         for i in 0..3 {
-            println!("{0: >70} {1: >4}", spd_title[i], stat_dist[i]);
-            print_stats(stat_dist[i])
+            println!("{0: <30} {1}", DIST[i], stat_dist[i]);
+            print_stats(stat_dist[i] as f64)
+        }
+        for _i in 0..3 {
+            println!();
         }
     }
 
-}
-
-fn print_stats(stat: i32) {
-    println!("{}", stat);
 }
